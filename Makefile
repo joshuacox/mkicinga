@@ -49,7 +49,7 @@ runprod:
 	-p 3443:443 \
 	-p 5665:5665 \
 	-v /var/run/docker.sock:/run/docker.sock \
-	-v $(MYSQL_DATADIR)/mysql:/var/lib/mysql \
+	-v $(MYSQL_DATADIR):/var/lib/mysql \
 	-v $(ICINGA_DATADIR)/lib/icinga2:/var/lib/icinga2 \
 	-v $(ICINGA_DATADIR)/etc/icinga2:/etc/icinga2 \
 	-v $(ICINGA_DATADIR)/etc/icingaweb2:/etc/icingaweb2 \
@@ -106,17 +106,19 @@ grab: grabicingadir grabmysqldatadir
 grabmysqldatadir:
 	-mkdir -p datadir
 	docker cp `cat cid`:/var/lib/mysql datadir/
-	sudo chown -R $(user). datadir/mysql
 	echo `pwd`/datadir/mysql > MYSQL_DATADIR
+	sudo chown -R 27:sudo datadir/mysql
 
 grabicingadir:
-	-mkdir -p datadir/icinga/lib
-	-mkdir -p datadir/icinga/etc
-	docker cp `cat cid`:/var/lib/icinga2 datadir/icinga/lib/
-	docker cp `cat cid`:/etc/icinga2 datadir/icinga/etc/
-	docker cp `cat cid`:/etc/icingaweb2 datadir/icinga/etc/
-	sudo chown -R $(user). datadir/icinga
+	-mkdir -p datadir/lib
+	-mkdir -p datadir/etc
+	docker cp `cat cid`:/var/lib/icinga2 datadir/lib/
+	docker cp `cat cid`:/etc/icinga2 datadir/etc/
+	docker cp `cat cid`:/etc/icingaweb2 datadir/etc/
 	echo `pwd`/datadir > ICINGA_DATADIR
+	sudo chown -R 998:996 datadir/etc/icinga2/
+	sudo chown -R 998:root datadir/etc/icinga2/constants.conf
+	sudo chown -R root:996 datadir/etc/icinga2/init.conf
 
 ICINGA_DATADIR:
 	@while [ -z "$$ICINGA_DATADIR" ]; do \
