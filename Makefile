@@ -14,9 +14,9 @@ help:
 	@echo ""   1. make run       - build and run docker container
 
 # run a plain container
-init: pull rundocker
+init: rm pull rundocker
 
-run: pull runprod
+run: rm pull runprod
 
 pull:
 	docker pull icinga/icinga2
@@ -32,7 +32,8 @@ rundocker:
 	-d \
 	-p 3080:80 \
 	-v $(shell which docker):/bin/docker \
-	-t $(TAG)
+	-t $(TAG) \
+	/bin/bash -c 'while true; do /opt/icinga2/initdocker; sleep 1; done'
 
 runprod:
 	$(eval MYSQL_DATADIR := $(shell cat MYSQL_DATADIR))
@@ -52,7 +53,24 @@ runprod:
 	-v $(ICINGA_DATADIR)/lib/icinga2:/var/lib/icinga2 \
 	-v $(ICINGA_DATADIR)/etc/icinga2:/etc/icinga2 \
 	-v $(ICINGA_DATADIR)/etc/icingaweb2:/etc/icingaweb2 \
-	-t $(TAG)
+	-t $(TAG) \
+	/bin/bash -c 'while true; do /opt/icinga2/initdocker; sleep 1; done'
+
+bash:
+	$(eval TMP := $(shell mktemp -d --suffix=DOCKERTMP))
+	$(eval NAME := $(shell cat NAME))
+	$(eval TAG := $(shell cat TAG))
+	chmod 777 $(TMP)
+	@docker run --name=$(NAME) \
+	--cidfile="cid" \
+	-v $(TMP):/tmp \
+	-ti \
+	-d \
+	-p 3080:80 \
+	-v $(shell which docker):/bin/docker \
+	-t $(TAG) \
+	/bin/bash
+
 
 kill:
 	-@docker kill `cat cid`

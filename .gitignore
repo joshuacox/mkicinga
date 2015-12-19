@@ -3,6 +3,6 @@ mysqlcid
 mysqltemp
 jessie
 datadir
-APACHE_DATADIR
+ICINGA_DATADIR
 MYSQL_DATADIR
 MYSQL_PASS
