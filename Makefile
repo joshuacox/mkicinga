@@ -100,20 +100,17 @@ grab: grabicingadir grabmysqldatadir
 
 grabmysqldatadir:
 	-mkdir -p datadir
-	docker cp `cat cid`:/var/lib/mysql datadir/
+	docker cp `cat mysqltemp`:/var/lib/mysql  - |sudo tar -C datadir/ -pxvf -
 	echo `pwd`/datadir/mysql > MYSQL_DATADIR
 	sudo chown -R 27:sudo datadir/mysql
 
 grabicingadir:
 	-mkdir -p datadir/lib
 	-mkdir -p datadir/etc
-	docker cp `cat cid`:/var/lib/icinga2 datadir/lib/
-	docker cp `cat cid`:/etc/icinga2 datadir/etc/
-	docker cp `cat cid`:/etc/icingaweb2 datadir/etc/
+	docker cp `cat cid`:/var/lib/icinga2  - |sudo tar -C datadir/lib -pxvf -
+	docker cp `cat cid`:/etc/icinga2  - |sudo tar -C datadir/etc/ -pxvf -
+	docker cp `cat cid`:/etc/icingaweb2  - |sudo tar -C datadir/etc/ -pxvf -
 	echo `pwd`/datadir > ICINGA_DATADIR
-	sudo chown -R 998:996 datadir/etc/icinga2/
-	sudo chown -R 998:root datadir/etc/icinga2/constants.conf
-	sudo chown -R root:996 datadir/etc/icinga2/init.conf
 
 ICINGA_DATADIR:
 	@while [ -z "$$ICINGA_DATADIR" ]; do \
