@@ -27,7 +27,9 @@ rundocker:
 	-d \
 	-p 3080:80 \
 	-v $(shell which docker):/bin/docker \
-	-t $(TAG) \
+	-t $(TAG) 
+
+#fuck this
 	/bin/bash -c 'while true; do /opt/icinga2/initdocker; sleep 1; done'
 
 runprod:
@@ -48,8 +50,7 @@ runprod:
 	-v $(ICINGA_DATADIR)/lib/icinga2:/var/lib/icinga2 \
 	-v $(ICINGA_DATADIR)/etc/icinga2:/etc/icinga2 \
 	-v $(ICINGA_DATADIR)/etc/icingaweb2:/etc/icingaweb2 \
-	-t $(TAG) \
-	/bin/bash -c 'while true; do /opt/icinga2/initdocker; sleep 1; done'
+	-t $(TAG)
 
 bash:
 	$(eval TMP := $(shell mktemp -d --suffix=DOCKERTMP))
