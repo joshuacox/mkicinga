@@ -1,9 +1,11 @@
-# Deprecated - the official image is no longer maintained
+# Deprecated 
+
+- the official image is no longer maintained
 
 Try this instead:
 https://github.com/joshuacox/docker-icinga2
 
-# mkicinga
+## mkicinga
 
 
 
